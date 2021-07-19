@@ -1,9 +1,13 @@
+import pytest
+
+from mdurl import format, parse
 from tests.fixtures.url import PARSED as FIXTURES
 
-from mdurl import parse, format
 
-
-def test_format():
-    for url, expected in FIXTURES.items():
-        parsed = parse(url)
-        assert format(parsed) == url
+@pytest.mark.parametrize(
+    "url,expected_dict",
+    FIXTURES.items(),
+)
+def test_format(url, expected_dict):
+    parsed = parse(url)
+    assert format(parsed) == url

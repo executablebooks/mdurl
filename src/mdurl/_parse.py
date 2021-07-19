@@ -41,69 +41,76 @@
 
 from collections import defaultdict
 import re
+from typing import Optional
 
 # Reference: RFC 3986, RFC 1808, RFC 2396
 
 # define these here so at least they only have to be
 # compiled once on the first module load.
-PROTOCOL_PATTERN = re.compile("^([a-z0-9.+-]+:)", flags=re.IGNORECASE)
-PORT_PATTERN = re.compile(":[0-9]*$")
+PROTOCOL_PATTERN = re.compile(r"^([a-z0-9.+-]+:)", flags=re.IGNORECASE)
+PORT_PATTERN = re.compile(r":[0-9]*$")
 
 # Special case for a simple path URL
-SIMPLE_PATH_PATTERN = re.compile("^(//?(?!/)[^?\s]*)(\?[^\s]*)?$")
+SIMPLE_PATH_PATTERN = re.compile(r"^(//?(?!/)[^?\s]*)(\?[^\s]*)?$")
 
 # RFC 2396: characters reserved for delimiting URLs.
 # We actually just auto-escape these.
-DELIMS = ( '<', '>', '"', '`', ' ', '\r', '\n', '\t' )
+DELIMS = ("<", ">", '"', "`", " ", "\r", "\n", "\t")
 
 # RFC 2396: characters not allowed for various reasons.
-UNWISE = ( '{', '}', '|', '\\', '^', '`' ) + DELIMS
+UNWISE = ("{", "}", "|", "\\", "^", "`") + DELIMS
 
 # Allowed by RFCs, but cause of XSS attacks.  Always escape these.
-AUTO_ESCAPE = ( '\'', ) + UNWISE
+AUTO_ESCAPE = ("'",) + UNWISE
 # Characters that are never ever allowed in a hostname.
 # Note that any invalid chars are also handled, but these
 # are the ones that are *expected* to be seen, so we fast-path
 # them.
-NON_HOST_CHARS = ( '%', '/', '?', ';', '#' ) + AUTO_ESCAPE
-HOST_ENDING_CHARS = ( '/', '?', '#' )
+NON_HOST_CHARS = ("%", "/", "?", ";", "#") + AUTO_ESCAPE
+HOST_ENDING_CHARS = ("/", "?", "#")
 HOSTNAME_MAX_LEN = 255
-HOSTNAME_PART_PATTERN = re.compile("^[+a-z0-9A-Z_-]{0,63}$")
-HOSTNAME_PART_START = re.compile("^([+a-z0-9A-Z_-]{0,63})(.*)$")
+HOSTNAME_PART_PATTERN = re.compile(r"^[+a-z0-9A-Z_-]{0,63}$")
+HOSTNAME_PART_START = re.compile(r"^([+a-z0-9A-Z_-]{0,63})(.*)$")
 # protocols that can allow "unsafe" and "unwise" chars.
 
 # protocols that never have a hostname.
-HOSTLESS_PROTOCOL = defaultdict(bool, {
-  'javascript': True,
-  'javascript:': True,
-})
+HOSTLESS_PROTOCOL = defaultdict(
+    bool,
+    {
+        "javascript": True,
+        "javascript:": True,
+    },
+)
 # protocols that always contain a // bit.
-SLASHED_PROTOCOL = defaultdict(bool, {
-  'http': True,
-  'https': True,
-  'ftp': True,
-  'gopher': True,
-  'file': True,
-  'http:': True,
-  'https:': True,
-  'ftp:': True,
-  'gopher:': True,
-  'file:': True
-})
+SLASHED_PROTOCOL = defaultdict(
+    bool,
+    {
+        "http": True,
+        "https": True,
+        "ftp": True,
+        "gopher": True,
+        "file": True,
+        "http:": True,
+        "https:": True,
+        "ftp:": True,
+        "gopher:": True,
+        "file:": True,
+    },
+)
 
 
 class URL:
-    def __init__(self):
+    def __init__(self) -> None:
         self.protocol = None
         self.slashes = None
         self.auth = None
         self.port = None
-        self.hostname = None
+        self.hostname: Optional[str] = None
         self.hash = None
-        self.search = None
-        self.pathname = None
+        self.search: Optional[str] = None
+        self.pathname: Optional[str] = None
 
-    def parse(self, url, slashes_denote_host: bool):
+    def parse(self, url: str, slashes_denote_host: bool) -> "URL":
         lower_proto = None
         slashes = False
         rest = url
@@ -126,19 +133,21 @@ class URL:
             proto = proto.group()
             lower_proto = proto.lower()
             self.protocol = proto
-            rest = rest[len(proto):]
+            rest = rest[len(proto) :]
 
         # figure out if it's got a host
         # user@server is *always* interpreted as a hostname, and url
         # resolution will treat //foo/bar as host=foo,path=bar because that's
         # how the browser resolves relative URLs.
-        if slashes_denote_host or proto or re.search("^//[^@/]+@[^@/]+", rest):
+        if slashes_denote_host or proto or re.search(r"^//[^@/]+@[^@/]+", rest):
             slashes = rest.startswith("//")
             if slashes and not (proto and HOSTLESS_PROTOCOL[proto]):
                 rest = rest[2:]
                 self.slashes = True
 
-        if not HOSTLESS_PROTOCOL[proto] and (slashes or (proto and not SLASHED_PROTOCOL[proto])):
+        if not HOSTLESS_PROTOCOL[proto] and (
+            slashes or (proto and not SLASHED_PROTOCOL[proto])
+        ):
 
             # there's a hostname.
             # the first instance of /, ?, ;, or # ends the host.
@@ -170,13 +179,13 @@ class URL:
             else:
                 # atSign must be in auth portion.
                 # http://a@b/c@d => host:b auth:a path:/c@d
-                at_sign = rest.rfind("@", 0, host_end+1)
+                at_sign = rest.rfind("@", 0, host_end + 1)
 
             # Now we have a portion which is definitely the auth.
             # Pull that off.
             if at_sign != -1:
                 auth = rest[:at_sign]
-                rest = rest[at_sign+1:]
+                rest = rest[at_sign + 1 :]
                 self.auth = auth
 
             # the host is the remaining to the left of the first non-host char
@@ -189,7 +198,7 @@ class URL:
             if host_end == -1:
                 host_end = len(rest)
 
-            if rest[host_end -1] == ":":
+            if rest[host_end - 1] == ":":
                 host_end -= 1
             host = rest[:host_end]
             rest = rest[host_end:]
@@ -199,16 +208,18 @@ class URL:
 
             # we've indicated that there is a hostname,
             # so even if it's empty, it has to be present.
-            self.hostname = self.hostname or ''
+            self.hostname = self.hostname or ""
 
             # if hostname begins with [ and ends with ]
             # assume that it's an IPv6 address.
-            ipv6_hostname = self.hostname.startswith("[") and self.hostname.endswith("]")
+            ipv6_hostname = self.hostname.startswith("[") and self.hostname.endswith(
+                "]"
+            )
 
             # validate a little.
             if not ipv6_hostname:
                 hostparts = self.hostname.split(".")
-                l = len(hostparts)
+                l = len(hostparts)  # noqa: E741
                 i = 0
                 while i < l:
                     part = hostparts[i]
@@ -219,12 +230,12 @@ class URL:
                         newpart = ""
                         k = len(part)
                         j = 0
-                        while j <k:
+                        while j < k:
                             if ord(part[j]) > 127:
                                 # we replace non-ASCII char with a temporary placeholder
                                 # we need this to make sure size of hostname is not
                                 # broken by replacing non-ASCII by nothing
-                                newpart += 'x'
+                                newpart += "x"
                             else:
                                 newpart += part[j]
                             j += 1  # emulate statement3 in JS for loop
@@ -232,7 +243,7 @@ class URL:
                         # we test again with ASCII char only
                         if not HOSTNAME_PART_PATTERN.search(newpart):
                             valid_parts = hostparts[:i]
-                            not_host = hostparts[i+1:]
+                            not_host = hostparts[i + 1 :]
                             bit = HOSTNAME_PART_START.search(part)
                             if bit:
                                 valid_parts.append(bit.group(1))
@@ -252,7 +263,7 @@ class URL:
                 self.hostname = self.hostname[1:-1]
 
         # chop off from the tail first.
-        hash = rest.find("#")
+        hash = rest.find("#")  # noqa: A001
         if hash != -1:
             # got a fragment string.
             self.hash = rest[hash:]
@@ -274,7 +285,7 @@ class URL:
             port = port.group()
             if port != ":":
                 self.port = port[1:]
-            host = host[:-len(port)]
+            host = host[: -len(port)]
         if host:
             self.hostname = host
 
