@@ -46,7 +46,7 @@ jobs:
 
     - name: Install test deps
       run: |
-        pip install -r tests/requirements.txt
+        pip install . -r tests/requirements.txt
 
     - name: Test with pytest
       run: |
