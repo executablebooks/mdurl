@@ -1,0 +1,19 @@
+def format(url):
+    result = ""
+
+    result += url.protocol or ""
+    result += "//" if url.slashes else ""
+    result += url.auth + "@" if url.auth else ''
+
+    if url.hostname and ":" in url.hostname:
+        # ipv6 address
+        result += '[' + url.hostname + ']'
+    else:
+        result += url.hostname or ''
+
+    result += ":" + url.port if url.port else ''
+    result += url.pathname or ''
+    result += url.search or ''
+    result += url.hash or ''
+
+    return result
