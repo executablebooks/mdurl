@@ -1,4 +1,4 @@
-from string import ascii_letters, digits
+from string import ascii_letters, digits, hexdigits
 from typing import Dict, List, Sequence
 from urllib.parse import quote as encode_uri_component
 
@@ -54,7 +54,7 @@ def encode(
 
         #                              %
         if keep_escaped and code == 0x25 and i + 2 < l:
-            if all(c in ASCII_LETTERS_AND_DIGITS for c in string[i + 1 : i + 3]):
+            if all(c in hexdigits for c in string[i + 1 : i + 3]):
                 result += string[i : i + 3]
                 i += 2
                 i += 1  # JS for loop statement3
