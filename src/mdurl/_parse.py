@@ -290,7 +290,7 @@ class URL:
             self.hostname = host
 
 
-def url_parse(url, slashes_denote_host: bool = False):
+def url_parse(url, *, slashes_denote_host: bool = False):
     if isinstance(url, URL):
         return url
     u = URL()
