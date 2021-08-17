@@ -130,6 +130,7 @@ class MutableURL:
                     self.search = simple_path.group(2)
                 return self
 
+        proto = ""
         proto_match = PROTOCOL_PATTERN.match(rest)
         if proto_match:
             proto = proto_match.group()

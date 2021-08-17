@@ -7,7 +7,7 @@ from tests.fixtures.url import PARSED as FIXTURES
 def is_url_and_dict_equal(url, url_dict):
     return (
         url.protocol == url_dict.get("protocol")
-        and url.slashes == url_dict.get("slashes")
+        and url.slashes == url_dict.get("slashes", False)
         and url.auth == url_dict.get("auth")
         and url.port == url_dict.get("port")
         and url.hostname == url_dict.get("hostname")
