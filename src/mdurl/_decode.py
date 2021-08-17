@@ -1,11 +1,11 @@
 import functools
 import re
-from typing import List, Sequence
+from typing import Dict, List, Sequence
 
 DECODE_DEFAULT_CHARS = ";/?:@&=+$,#"
 DECODE_COMPONENT_CHARS = ""
 
-decode_cache = {}
+decode_cache: Dict[str, List[str]] = {}
 
 
 def get_decode_cache(exclude: str) -> Sequence[str]:
@@ -20,8 +20,8 @@ def get_decode_cache(exclude: str) -> Sequence[str]:
         cache.append(ch)
 
     for i in range(len(exclude)):
-        ch = ord(exclude[i])
-        cache[ch] = "%" + ("0" + hex(ch)[2:].upper())[-2:]
+        ch_code = ord(exclude[i])
+        cache[ch_code] = "%" + ("0" + hex(ch_code)[2:].upper())[-2:]
 
     return cache
 
@@ -34,7 +34,7 @@ def decode(string: str, exclude: str = DECODE_DEFAULT_CHARS) -> str:
     return re.sub(r"(%[a-f0-9]{2})+", repl_func, string, flags=re.IGNORECASE)
 
 
-def repl_func_with_cache(match, cache) -> str:
+def repl_func_with_cache(match: re.Match, cache: Sequence[str]) -> str:
     seq = match.group()
     result = ""
 

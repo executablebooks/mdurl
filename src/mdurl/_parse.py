@@ -41,7 +41,9 @@
 
 from collections import defaultdict
 import re
-from typing import Optional
+from typing import Optional, Union
+
+from mdurl._url import URL
 
 # Reference: RFC 3986, RFC 1808, RFC 2396
 
@@ -99,19 +101,19 @@ SLASHED_PROTOCOL = defaultdict(
 )
 
 
-class URL:
+class MutableURL:
     def __init__(self) -> None:
-        self.protocol = None
-        self.slashes = None
-        self.auth = None
-        self.port = None
+        self.protocol: Optional[str] = None
+        self.slashes: bool = False
+        self.auth: Optional[str] = None
+        self.port: Optional[str] = None
         self.hostname: Optional[str] = None
-        self.hash = None
+        self.hash: Optional[str] = None
         self.search: Optional[str] = None
         self.pathname: Optional[str] = None
 
-    def parse(self, url: str, slashes_denote_host: bool) -> "URL":
-        lower_proto = None
+    def parse(self, url: str, slashes_denote_host: bool) -> "MutableURL":
+        lower_proto = ""
         slashes = False
         rest = url
 
@@ -128,9 +130,9 @@ class URL:
                     self.search = simple_path.group(2)
                 return self
 
-        proto = PROTOCOL_PATTERN.match(rest)
-        if proto:
-            proto = proto.group()
+        proto_match = PROTOCOL_PATTERN.match(rest)
+        if proto_match:
+            proto = proto_match.group()
             lower_proto = proto.lower()
             self.protocol = proto
             rest = rest[len(proto) :]
@@ -279,10 +281,10 @@ class URL:
 
         return self
 
-    def parse_host(self, host):
-        port = PORT_PATTERN.search(host)
-        if port:
-            port = port.group()
+    def parse_host(self, host: str) -> None:
+        port_match = PORT_PATTERN.search(host)
+        if port_match:
+            port = port_match.group()
             if port != ":":
                 self.port = port[1:]
             host = host[: -len(port)]
@@ -290,9 +292,11 @@ class URL:
             self.hostname = host
 
 
-def url_parse(url, *, slashes_denote_host: bool = False):
+def url_parse(url: Union[URL, str], *, slashes_denote_host: bool = False) -> URL:
     if isinstance(url, URL):
         return url
-    u = URL()
+    u = MutableURL()
     u.parse(url, slashes_denote_host)
-    return u
+    return URL(
+        u.protocol, u.slashes, u.auth, u.port, u.hostname, u.hash, u.search, u.pathname
+    )

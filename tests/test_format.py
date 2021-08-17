@@ -4,10 +4,7 @@ from mdurl import format, parse
 from tests.fixtures.url import PARSED as FIXTURES
 
 
-@pytest.mark.parametrize(
-    "url,expected_dict",
-    FIXTURES.items(),
-)
-def test_format(url, expected_dict):
+@pytest.mark.parametrize("url", FIXTURES.keys())
+def test_format(url):
     parsed = parse(url)
     assert format(parsed) == url

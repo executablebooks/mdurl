@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from mdurl._parse import URL
+    from mdurl._url import URL
 
 
 def format(url: "URL") -> str:  # noqa: A001
