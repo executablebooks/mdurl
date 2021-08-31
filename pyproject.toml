@@ -31,7 +31,7 @@ classifiers = [
 keywords = ["markdown", "commonmark"]
 
 [project.urls]
-"Homepage" = "https://github.com/hukkin/mdurl"
+"Homepage" = "https://github.com/executablebooks/mdurl"
 
 
 [tool.flit.sdist]
@@ -75,7 +75,7 @@ commands =
 
 
 [tool.coverage.run]
-omit = ["tests/*", "*/site-packages/*"]
+source = ["mdurl"]
 
 [tool.coverage.report]
 # Regexes for lines to exclude from consideration
