@@ -1,7 +1,7 @@
 # mdurl
 
-[![Build Status](https://github.com/hukkin/mdurl/workflows/Tests/badge.svg?branch=master)](https://github.com/hukkin/mdurl/actions?query=workflow%3ATests+branch%3Amaster+event%3Apush)
-[![codecov.io](https://codecov.io/gh/hukkin/mdurl/branch/master/graph/badge.svg)](https://codecov.io/gh/hukkin/mdurl)
+[![Build Status](https://github.com/executablebooks/mdurl/workflows/Tests/badge.svg?branch=master)](https://github.com/executablebooks/mdurl/actions?query=workflow%3ATests+branch%3Amaster+event%3Apush)
+[![codecov.io](https://codecov.io/gh/executablebooks/mdurl/branch/master/graph/badge.svg)](https://codecov.io/gh/executablebooks/mdurl)
 [![PyPI version](https://img.shields.io/pypi/v/mdurl)](https://pypi.org/project/mdurl)
 
 TODO: Update the README below this point. Explain that this is a Python port etc.
