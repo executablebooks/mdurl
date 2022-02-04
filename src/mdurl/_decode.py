@@ -36,7 +36,7 @@ def decode(string: str, exclude: str = DECODE_DEFAULT_CHARS) -> str:
     return re.sub(r"(%[a-f0-9]{2})+", repl_func, string, flags=re.IGNORECASE)
 
 
-def repl_func_with_cache(match: "re.Match", cache: Sequence[str]) -> str:
+def repl_func_with_cache(match: re.Match, cache: Sequence[str]) -> str:
     seq = match.group()
     result = ""
 
