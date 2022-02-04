@@ -39,9 +39,10 @@
 # 6. Removed extraneous result properties: `host`, `path`, `query`, etc.,
 #    which can be constructed using other parts of the url.
 
+from __future__ import annotations
+
 from collections import defaultdict
 import re
-from typing import Optional, Union
 
 from mdurl._url import URL
 
@@ -103,14 +104,14 @@ SLASHED_PROTOCOL = defaultdict(
 
 class MutableURL:
     def __init__(self) -> None:
-        self.protocol: Optional[str] = None
+        self.protocol: str | None = None
         self.slashes: bool = False
-        self.auth: Optional[str] = None
-        self.port: Optional[str] = None
-        self.hostname: Optional[str] = None
-        self.hash: Optional[str] = None
-        self.search: Optional[str] = None
-        self.pathname: Optional[str] = None
+        self.auth: str | None = None
+        self.port: str | None = None
+        self.hostname: str | None = None
+        self.hash: str | None = None
+        self.search: str | None = None
+        self.pathname: str | None = None
 
     def parse(self, url: str, slashes_denote_host: bool) -> "MutableURL":
         lower_proto = ""
@@ -293,7 +294,7 @@ class MutableURL:
             self.hostname = host
 
 
-def url_parse(url: Union[URL, str], *, slashes_denote_host: bool = False) -> URL:
+def url_parse(url: URL | str, *, slashes_denote_host: bool = False) -> URL:
     if isinstance(url, URL):
         return url
     u = MutableURL()
