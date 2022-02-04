@@ -1,12 +1,14 @@
-from typing import NamedTuple, Optional
+from __future__ import annotations
+
+from typing import NamedTuple
 
 
 class URL(NamedTuple):
-    protocol: Optional[str]
+    protocol: str | None
     slashes: bool
-    auth: Optional[str]
-    port: Optional[str]
-    hostname: Optional[str]
-    hash: Optional[str]  # noqa: A003
-    search: Optional[str]
-    pathname: Optional[str]
+    auth: str | None
+    port: str | None
+    hostname: str | None
+    hash: str | None  # noqa: A003
+    search: str | None
+    pathname: str | None

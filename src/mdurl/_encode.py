@@ -1,5 +1,7 @@
+from __future__ import annotations
+
+from collections.abc import Sequence
 from string import ascii_letters, digits, hexdigits
-from typing import Dict, List, Sequence
 from urllib.parse import quote as encode_uri_component
 
 ASCII_LETTERS_AND_DIGITS = ascii_letters + digits
@@ -7,7 +9,7 @@ ASCII_LETTERS_AND_DIGITS = ascii_letters + digits
 ENCODE_DEFAULT_CHARS = ";/?:@&=+$,-_.!~*'()#"
 ENCODE_COMPONENT_CHARS = "-_.!~*'()"
 
-encode_cache: Dict[str, List[str]] = {}
+encode_cache: dict[str, list[str]] = {}
 
 
 # Create a lookup array where anything but characters in `chars` string
@@ -16,7 +18,7 @@ def get_encode_cache(exclude: str) -> Sequence[str]:
     if exclude in encode_cache:
         return encode_cache[exclude]
 
-    cache: List[str] = []
+    cache: list[str] = []
     encode_cache[exclude] = cache
 
     for i in range(128):

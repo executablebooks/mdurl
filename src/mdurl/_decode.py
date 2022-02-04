@@ -1,18 +1,20 @@
+from __future__ import annotations
+
+from collections.abc import Sequence
 import functools
 import re
-from typing import Dict, List, Sequence
 
 DECODE_DEFAULT_CHARS = ";/?:@&=+$,#"
 DECODE_COMPONENT_CHARS = ""
 
-decode_cache: Dict[str, List[str]] = {}
+decode_cache: dict[str, list[str]] = {}
 
 
 def get_decode_cache(exclude: str) -> Sequence[str]:
     if exclude in decode_cache:
         return decode_cache[exclude]
 
-    cache: List[str] = []
+    cache: list[str] = []
     decode_cache[exclude] = cache
 
     for i in range(128):
