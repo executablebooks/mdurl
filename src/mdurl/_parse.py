@@ -202,7 +202,7 @@ class MutableURL:
             if host_end == -1:
                 host_end = len(rest)
 
-            if rest[host_end - 1] == ":":
+            if host_end > 0 and rest[host_end - 1] == ":":
                 host_end -= 1
             host = rest[:host_end]
             rest = rest[host_end:]
