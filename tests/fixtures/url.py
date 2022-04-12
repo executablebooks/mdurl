@@ -606,5 +606,5 @@ PARSED = {
         "protocol": "http:",
         "hostname": "",
         "slashes": True,
-    }
+    },
 }
