@@ -605,7 +605,6 @@ PARSED = {
     "http://": {
         "protocol": "http:",
         "hostname": "",
-        "pathname": "",
         "slashes": True,
     }
 }
