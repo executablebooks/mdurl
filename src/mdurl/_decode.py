@@ -55,12 +55,11 @@ def repl_func_with_cache(match: re.Match, cache: Sequence[str]) -> str:
             b2 = int(seq[i + 4 : i + 6], 16)
 
             if (b2 & 0xC0) == 0x80:
-                chr_ = ((b1 << 6) & 0x7C0) | (b2 & 0x3F)
-
-                if chr_ < 0x80:
-                    result += "\ufffd\ufffd"
-                else:
-                    result += chr(chr_)
+                all_bytes = bytes((b1, b2))
+                try:
+                    result += all_bytes.decode()
+                except UnicodeDecodeError:
+                    result += "\ufffd" * 2
 
                 i += 3
                 i += 3  # emulate JS for loop statement3
@@ -72,12 +71,11 @@ def repl_func_with_cache(match: re.Match, cache: Sequence[str]) -> str:
             b3 = int(seq[i + 7 : i + 9], 16)
 
             if (b2 & 0xC0) == 0x80 and (b3 & 0xC0) == 0x80:
-                chr_ = ((b1 << 12) & 0xF000) | ((b2 << 6) & 0xFC0) | (b3 & 0x3F)
-
-                if chr_ < 0x800 or (chr_ >= 0xD800 and chr_ <= 0xDFFF):
-                    result += "\ufffd\ufffd\ufffd"
-                else:
-                    result += chr(chr_)
+                all_bytes = bytes((b1, b2, b3))
+                try:
+                    result += all_bytes.decode()
+                except UnicodeDecodeError:
+                    result += "\ufffd" * 3
 
                 i += 6
                 i += 3  # emulate JS for loop statement3
@@ -90,18 +88,11 @@ def repl_func_with_cache(match: re.Match, cache: Sequence[str]) -> str:
             b4 = int(seq[i + 10 : i + 12], 16)
 
             if (b2 & 0xC0) == 0x80 and (b3 & 0xC0) == 0x80 and (b4 & 0xC0) == 0x80:
-                chr_ = (
-                    ((b1 << 18) & 0x1C0000)
-                    | ((b2 << 12) & 0x3F000)
-                    | ((b3 << 6) & 0xFC0)
-                    | (b4 & 0x3F)
-                )
-
-                if chr_ < 0x10000 or chr_ > 0x10FFFF:
-                    result += "\ufffd\ufffd\ufffd\ufffd"
-                else:
-                    chr_ -= 0x10000
-                    result += chr(0xD800 + (chr_ >> 10)) + chr(0xDC00 + (chr_ & 0x3FF))
+                all_bytes = bytes((b1, b2, b3, b4))
+                try:
+                    result += all_bytes.decode()
+                except UnicodeDecodeError:
+                    result += "\ufffd" * 4
 
                 i += 9
                 i += 3  # emulate JS for loop statement3
