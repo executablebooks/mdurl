@@ -82,7 +82,7 @@ def repl_func_with_cache(match: re.Match, cache: Sequence[str]) -> str:
                 continue
 
         if (b1 & 0xF8) == 0xF0 and (i + 9 < l):
-            # 111110xx 10xxxxxx 10xxxxxx 10xxxxxx
+            # 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
             b2 = int(seq[i + 4 : i + 6], 16)
             b3 = int(seq[i + 7 : i + 9], 16)
             b4 = int(seq[i + 10 : i + 12], 16)
