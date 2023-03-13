@@ -152,7 +152,6 @@ class MutableURL:
         if not HOSTLESS_PROTOCOL[proto] and (
             slashes or (proto and not SLASHED_PROTOCOL[proto])
         ):
-
             # there's a hostname.
             # the first instance of /, ?, ;, or # ends the host.
             #
