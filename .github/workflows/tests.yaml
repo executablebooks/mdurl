@@ -13,8 +13,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v4
       with:
         python-version: '3.8'
 
@@ -37,10 +37,10 @@ jobs:
     continue-on-error: ${{ matrix.python-version == '3.11-dev' }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -55,7 +55,7 @@ jobs:
 
     - name: Report coverage
       if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.10'
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v3
 
   allgood:
     runs-on: ubuntu-latest
@@ -71,8 +71,8 @@ jobs:
     if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v4
       with:
         python-version: '3.7'
     - name: Install build and publish tools
