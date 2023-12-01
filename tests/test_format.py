@@ -1,6 +1,6 @@
 import pytest
 
-from mdurl import format, parse
+from mdurl import format, parse  # noqa: A004
 from tests.fixtures.url import PARSED as FIXTURES
 
 

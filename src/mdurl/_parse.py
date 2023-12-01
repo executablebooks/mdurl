@@ -113,7 +113,7 @@ class MutableURL:
         self.search: str | None = None
         self.pathname: str | None = None
 
-    def parse(self, url: str, slashes_denote_host: bool) -> "MutableURL":
+    def parse(self, url: str, slashes_denote_host: bool) -> MutableURL:
         lower_proto = ""
         slashes = False
         rest = url
