@@ -1,6 +1,6 @@
 # mdurl
 
-[![Build Status](https://github.com/executablebooks/mdurl/workflows/Tests/badge.svg?branch=master)](https://github.com/executablebooks/mdurl/actions?query=workflow%3ATests+branch%3Amaster+event%3Apush)
+[![Build Status](https://github.com/executablebooks/mdurl/actions/workflows/tests.yaml/badge.svg?branch=master)](https://github.com/executablebooks/mdurl/actions?query=workflow%3ATests+branch%3Amaster+event%3Apush)
 [![codecov.io](https://codecov.io/gh/executablebooks/mdurl/branch/master/graph/badge.svg)](https://codecov.io/gh/executablebooks/mdurl)
 [![PyPI version](https://img.shields.io/pypi/v/mdurl)](https://pypi.org/project/mdurl)
 
