@@ -1,8 +1,12 @@
 from __future__ import annotations
 
-from collections.abc import Sequence
 import functools
 import re
+
+TYPE_CHECKING = False
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
 
 DECODE_DEFAULT_CHARS = ";/?:@&=+$,#"
 DECODE_COMPONENT_CHARS = ""

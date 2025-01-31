@@ -1,10 +1,15 @@
 from __future__ import annotations
 
-from collections.abc import Sequence
-from string import ascii_letters, digits, hexdigits
 from urllib.parse import quote as encode_uri_component
 
-ASCII_LETTERS_AND_DIGITS = ascii_letters + digits
+TYPE_CHECKING = False
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+ASCII_LETTERS_AND_DIGITS = (
+    "abcdefghijklmnopqrstuvwxyz" "ABCDEFGHIJKLMNOPQRSTUVWXYZ" "0123456789"
+)
+HEXDIGITS = "0123456789" "abcdef" "ABCDEF"
 
 ENCODE_DEFAULT_CHARS = ";/?:@&=+$,-_.!~*'()#"
 ENCODE_COMPONENT_CHARS = "-_.!~*'()"
@@ -56,7 +61,7 @@ def encode(
 
         #                              %
         if keep_escaped and code == 0x25 and i + 2 < l:
-            if all(c in hexdigits for c in string[i + 1 : i + 3]):
+            if all(c in HEXDIGITS for c in string[i + 1 : i + 3]):
                 result += string[i : i + 3]
                 i += 2
                 i += 1  # JS for loop statement3
