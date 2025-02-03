@@ -19,7 +19,7 @@ from mdurl import encode
             "%00%FF", "%00%FF", id="should preserve non-utf8 encoded characters"
         ),
         pytest.param(
-            "\x00\x7F\x80",
+            "\x00\x7f\x80",
             "%00%7F%C2%80",
             id="should encode characters on the cache borders",
         ),  # protects against off-by-one in cache implementation
@@ -38,12 +38,12 @@ def test_encode_arguments():
 
 def test_encode_surrogates():
     # bad surrogates (high)
-    assert encode("\uD800foo") == "%EF%BF%BDfoo"
-    assert encode("foo\uD800") == "foo%EF%BF%BD"
+    assert encode("\ud800foo") == "%EF%BF%BDfoo"
+    assert encode("foo\ud800") == "foo%EF%BF%BD"
 
     # bad surrogates (low)
-    assert encode("\uDD00foo") == "%EF%BF%BDfoo"
-    assert encode("foo\uDD00") == "foo%EF%BF%BD"
+    assert encode("\udd00foo") == "%EF%BF%BDfoo"
+    assert encode("foo\udd00") == "foo%EF%BF%BD"
 
     # valid one
     # (the codepoint is "D800 DD00" in UTF-16BE)
