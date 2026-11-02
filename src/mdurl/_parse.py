@@ -53,8 +53,18 @@ from mdurl._url import URL
 PROTOCOL_PATTERN = re.compile(r"^([a-z0-9.+-]+:)", flags=re.IGNORECASE)
 PORT_PATTERN = re.compile(r":[0-9]*$")
 
+# Whitespace as JavaScript's trim() and \s see it. Python's str.strip() and \s
+# also take U+001C to U+001F and U+0085, and miss U+FEFF.
+JS_WHITESPACE = (
+    "\t\n\v\f\r \xa0\u1680"
+    + "".join(map(chr, range(0x2000, 0x200B)))
+    + "\u2028\u2029\u202f\u205f\u3000\ufeff"
+)
+
 # Special case for a simple path URL
-SIMPLE_PATH_PATTERN = re.compile(r"^(//?(?!/)[^?\s]*)(\?[^\s]*)?$")
+SIMPLE_PATH_PATTERN = re.compile(
+    rf"^(//?(?!/)[^?{JS_WHITESPACE}]*)(\?[^{JS_WHITESPACE}]*)?$"
+)
 
 # RFC 2396: characters reserved for delimiting URLs.
 # We actually just auto-escape these.
@@ -120,7 +130,7 @@ class MutableURL:
 
         # trim before proceeding.
         # This is to support parse stuff like "  http://foo.com  \n"
-        rest = rest.strip()
+        rest = rest.strip(JS_WHITESPACE)
 
         if not slashes_denote_host and len(url.split("#")) == 1:
             # Try fast path regexp
