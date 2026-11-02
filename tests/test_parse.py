@@ -24,3 +24,17 @@ def is_url_and_dict_equal(url, url_dict):
 def test_parse(url, expected_dict):
     parsed = parse(url)
     assert is_url_and_dict_equal(parsed, expected_dict)
+
+
+@pytest.mark.parametrize(
+    "url,pathname",
+    [
+        # As in JavaScript trim(): U+001C-U+001F and U+0085 stay, U+FEFF goes
+        ("/u\x85", "/u\x85"),
+        ("\x1c/u", "\x1c/u"),
+        ("http://a.b/c\x1f", "/c\x1f"),
+        ("﻿/u﻿", "/u"),
+    ],
+)
+def test_parse_trims_javascript_whitespace(url, pathname):
+    assert parse(url).pathname == pathname
